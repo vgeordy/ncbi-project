@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./ncbi_backend
+    container_name: ncbi_backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./ncbi_backend:/app
+    environment:
+      - PYTHONUNBUFFERED=1
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  frontend:
+    build:
+      context: ./ncbi_frontend/ncbi_frontend
+    container_name: ncbi_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./ncbi_frontend/ncbi_frontend:/app
+    working_dir: /app
+    command: >
+      sh -c "npm install && npm run dev"
