@@ -11,7 +11,7 @@ from django.conf import settings
 
 NCBI_BASE = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
 
-
+# For more information: https://www.ncbi.nlm.nih.gov/books/NBK25499/
 # esearch + esummary pipeline api with usehistory=y flag enabled, so it caches the result on its history server, which allows for efficient pagination, reduces repeated search, reduces client side state, etc.
 # This api queries the database using the search term provided and returns back id and other basic information.
 class ESearchSummaryWithHistoryView(APIView):
@@ -40,8 +40,8 @@ class ESearchSummaryWithHistoryView(APIView):
             esearch_params = {
                 "db": db,
                 "term": term,
-                "retmax": 0,
-                "retmode": "json",
+                "retmax": 0, # 0 because we are just getting metadata + webenv + query_key
+                "retmode": "json", 
                 "usehistory": "y"
             }
 
@@ -61,7 +61,7 @@ class ESearchSummaryWithHistoryView(APIView):
                 "WebEnv": webenv,
                 "query_key": query_key,
                 "retmode": "json",
-                "retmax": 0,
+                "retmax": 0, # same as before, just need count metadata 
             }
 
             # fetch metadata (count) to paginate properly.
@@ -79,7 +79,7 @@ class ESearchSummaryWithHistoryView(APIView):
             "WebEnv": webenv,
             "query_key": query_key,
             "retstart": offset,
-            "retmax": limit,
+            "retmax": limit, # only needs to be passed in here to prevent bloated payloads
             "retmode": "json"
         }
 
@@ -122,8 +122,8 @@ class ESearchSummaryWithHistoryView(APIView):
                 query["term"] = term
             return f"{base}?{urlencode(query)}"
 
-        next_url = build_url(offset + limit) if (offset + limit < total) else None
-        prev_url = build_url(offset - limit) if offset > 0 else None
+        next_url = build_url(offset + limit) if (offset + limit < total) else None # allows for subsequent api request to made when user change pages
+        prev_url = build_url(offset - limit) if offset > 0 else None # similar to next but in reverse. probably not needed if we can cache this in frontend
 
         return Response({
             "results": results,
