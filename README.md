@@ -76,6 +76,7 @@ pip install -r requirements.txt
 ```bash
 python manage.py migrate
 python manage.py runserver
+# Leave the terminal open. Move on to the frontend portion.
 ```
 
 The API will be available at [http://127.0.0.1:8000/api/](http://127.0.0.1:8000/api/efetch/?ids=34512345).
@@ -118,7 +119,8 @@ This is the frontend for the NCBI Search Viewer, built with [React](https://reac
 ### Installation
 
 ```bash
-cd ncbi_frontend/ncbi_frontend
+# Open new terminal
+cd ncbi_frontend/ncbi_frontend # ⚠️ Just a heads-up — the correct folder is two directories down.
 npm install
 ```
 
